@@ -42,6 +42,6 @@ int main(void)
 	add_add(stack + ptr++);
 	add_num(4.0, stack + ptr++);
 	add_num(5.0, stack + ptr++);
-	n = eval_prefix(stack, ptr);
+	eval_prefix(stack, ptr, &n);
 	printf("%f\n", n.num);
 }

@@ -17,6 +17,7 @@ struct number {
 struct operator {
 	bool is_op;
 	char op;
+	int assoc, prec;
 	struct number (*calc)(struct number a, struct number b);
 };
 
@@ -26,5 +27,9 @@ union token {
 	struct number num;
 };
 int calculate(char *str, struct number *ret);
-struct number eval_prefix(union token *in_stack, int in_stack_ptr);
+int eval_prefix(union token *stack, int stack_ptr, struct number *ret);
+int shunting_yard(char *s, union token *queue);
+int get_type(const char *str);
+int get_op(const char *tok, struct operator *op);
+int get_num(const char *tok, struct number *num);
 #endif
