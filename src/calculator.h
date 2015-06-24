@@ -26,10 +26,10 @@ union token {
 	struct operator op;
 	struct number num;
 };
+enum assoc { NO_ASSOC, LEFT_ASSOC, RIGHT_ASSOC };
 int calculate(char *str, struct number *ret);
 int eval_prefix(union token *stack, int stack_ptr, struct number *ret);
 int shunting_yard(char *s, union token *queue);
 int get_type(const char *str);
-int get_op(const char *tok, struct operator *op);
 int get_num(const char *tok, struct number *num);
 #endif
