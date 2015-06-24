@@ -8,22 +8,23 @@
 
 #include <stdbool.h>
 
+#define STACK_SIZE 256
 struct number {
-	bool type;
+	bool is_op;
 	double num;
 };
 
 struct operator {
-	bool type;
+	bool is_op;
 	char op;
 	struct number (*calc)(struct number a, struct number b);
 };
 
 union token {
-	bool type;
+	bool is_op;
 	struct operator op;
 	struct number num;
 };
 int calculate(char *str, struct number *ret);
-
+struct number eval_prefix(union token *in_stack, int in_stack_ptr);
 #endif
