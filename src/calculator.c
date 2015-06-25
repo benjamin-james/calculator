@@ -133,5 +133,5 @@ int get_type(const char *str)
 }
 int get_num(const char *str, struct number *num)
 {
-	return mpfr_init_set_str(num->num, str, 10, MPFR_RNDN);
+	int ret = mpfr_init_set_str(num->num, str, 0, MPFR_RNDN);
 }

@@ -20,8 +20,8 @@ int main(void)
 			break;
 		add_history(input);
 		calculate(input, &n);
-		snprintf(buffer, sizeof(buffer), "%%.%ldRf\n", mpfr_get_prec(n.num));
-		mpfr_printf(buffer, n.num);
+//		snprintf(buffer, sizeof(buffer), "%%.%ldRf\n", mpfr_get_prec(n.num));
+		mpfr_printf("%RNf\n", n.num);
 		mpfr_clear(n.num);
 		free(input);
 	}

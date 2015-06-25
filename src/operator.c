@@ -1,4 +1,6 @@
 #include <mpfr.h>
+#include <string.h>
+
 #include "calculator.h"
 #include "operator.h"
 
@@ -8,30 +10,23 @@ int get_op(const char *str, struct operator *op)
 	op->op = *str;
 	op->assoc = LEFT_ASSOC;
 	op->prec = 1;
-	switch (*str) {
-	case '+':
+	if (!strcmp(str, "+")) {
 		op->prec = 1;
 		op->calc = mpfr_add;
-		break;
-	case '-':
+	} else if (!strcmp(str, "-")) {
 		op->prec = 1;
 		op->calc = mpfr_sub;
-		break;
-	case '*':
+	} else if (!strcmp(str, "*")) {
 		op->prec = 2;
 		op->calc = mpfr_mul;
-		break;
-	case '/':
+	} else if (!strcmp(str, "/")) {
 		op->prec = 2;
 		op->calc = mpfr_div;
-		break;
-	case '^':
+	} else if (!strcmp(str, "^")) {
 		op->assoc = RIGHT_ASSOC;
 		op->prec = 3;
 		op->calc = mpfr_pow;
-		break;
-	default:
+	} else
 		return -1;
-	}
 	return 0;
 }
