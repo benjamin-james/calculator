@@ -23,6 +23,7 @@ int main(void)
 //		snprintf(buffer, sizeof(buffer), "%%.%ldRf\n", mpfr_get_prec(n.num));
 		mpfr_printf("%RNf\n", n.num);
 		mpfr_clear(n.num);
+		mpfr_free_cache();
 		free(input);
 	}
 	return 0;

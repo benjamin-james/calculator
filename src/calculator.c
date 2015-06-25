@@ -81,9 +81,7 @@ int eval_postfix(union token *stack, int in_stack_ptr, struct number *ret)
 	for (i = 0; i < in_stack_ptr; i++) {
 		if (stack[i].is_op && stack_ptr < STACK_SIZE - 2) {
 			stack[i].op.calc(stack[stack_ptr+2].num.num, stack[stack_ptr+2].num.num, stack[stack_ptr+1].num.num, MPFR_RNDN);
-			stack_ptr++;
-			//mpfr_clear(a.num);
-			//mpfr_clear(b.num);
+			mpfr_clear(stack[++stack_ptr].num.num);
 		} else if (!stack[i].is_op)
 			stack[stack_ptr--] = stack[i];
 		else
@@ -98,11 +96,8 @@ int eval_prefix(union token *stack, int in_stack_ptr, struct number *ret)
 	int i, stack_ptr = STACK_SIZE - 1;
 	for (i = in_stack_ptr - 1; i >= 0; i--) {
 		if (stack[i].is_op && stack_ptr < STACK_SIZE - 2) {
-/*			struct number a = stack[++stack_ptr].num;
-			struct number b = stack[++stack_ptr].num;
-			stack[stack_ptr--].num = stack[i].op.calc(a,b);
-			mpfr_clear(a.num);
-			mpfr_clear(b.num);*/
+			stack[i].op.calc(stack[stack_ptr+2].num.num, stack[stack_ptr+2].num.num, stack[stack_ptr+1].num.num, MPFR_RNDN);
+			mpfr_clear(stack[++stack_ptr].num.num);
 		} else if (!stack[i].is_op)
 			stack[stack_ptr--] = stack[i];
 		else
@@ -133,5 +128,5 @@ int get_type(const char *str)
 }
 int get_num(const char *str, struct number *num)
 {
-	int ret = mpfr_init_set_str(num->num, str, 0, MPFR_RNDN);
+	return mpfr_init_set_str(num->num, str, 0, MPFR_RNDN);
 }
