@@ -14,7 +14,7 @@ int main(void)
 	char *input, buffer[256];
 	rl_bind_key('\t', rl_complete);
 	while (1) {
-		snprintf(buffer, sizeof(buffer), ">");
+		snprintf(buffer, sizeof(buffer), "> ");
 		input = readline(buffer);
 		if (!input || !strcmp(input, "exit"))
 			break;
