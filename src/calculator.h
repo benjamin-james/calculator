@@ -7,18 +7,19 @@
 #define RPARENS_TYPE 8
 
 #include <stdbool.h>
+#include <mpfr.h>
 
 #define STACK_SIZE 256
 struct number {
 	bool is_op;
-	double num;
+	mpfr_t num;
 };
 
 struct operator {
 	bool is_op;
 	char op;
 	int assoc, prec;
-	struct number (*calc)(struct number a, struct number b);
+	int (*calc)(mpfr_ptr rop, mpfr_srcptr op1, mpfr_srcptr op2, mpfr_rnd_t rnd);
 };
 
 union token {

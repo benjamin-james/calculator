@@ -1,19 +1,29 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+#include <readline/readline.h>
+#include <readline/history.h>
 
 #include "calculator.h"
 #include "operator.h"
 
-int main(int argc, char **argv)
+int main(void)
 {
-	union token stack[STACK_SIZE];
-	int ptr = 0;
 	struct number n;
-	char buffer[256];
-	if (argc < 2)
-		return -1;
-	strcpy(buffer, argv[1]);
-	calculate(buffer, &n);
-	printf("%f\n", n.num);
+	char *input, buffer[256];
+	rl_bind_key('\t', rl_complete);
+	while (1) {
+		snprintf(buffer, sizeof(buffer), ">");
+		input = readline(buffer);
+		if (!input || !strcmp(input, "exit"))
+			break;
+		add_history(input);
+		calculate(input, &n);
+		snprintf(buffer, sizeof(buffer), "%%.%ldRf\n", mpfr_get_prec(n.num));
+		mpfr_printf(buffer, n.num);
+		mpfr_clear(n.num);
+		free(input);
+	}
 	return 0;
 }

@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <mpfr.h>
+
 #include "calculator.h"
 #include "operator.h"
 
@@ -14,9 +16,9 @@ int op_loop(struct operator *stack, int *stack_ptr, union token *queue, int *que
 		queue[*queue_ptr].is_op = 1;
 		queue[(*queue_ptr)++].op = stack[--(*stack_ptr)];
 	}
-
+	return 0;
 }
-
+/*
 void display(struct operator *stack, int stack_ptr, union token *queue, int queue_ptr)
 {
 	puts("");
@@ -32,7 +34,7 @@ void display(struct operator *stack, int stack_ptr, union token *queue, int queu
 			printf("%f ", queue[i].num.num);
 	}
 	puts("\n");
-}
+	}*/
 /* returns the stack pointer */
 int shunting_yard(char *s, union token *queue)
 {
@@ -78,16 +80,17 @@ int eval_postfix(union token *stack, int in_stack_ptr, struct number *ret)
 	int i, stack_ptr = STACK_SIZE - 1;
 	for (i = 0; i < in_stack_ptr; i++) {
 		if (stack[i].is_op && stack_ptr < STACK_SIZE - 2) {
-			struct number a = stack[++stack_ptr].num;
-			struct number b = stack[++stack_ptr].num;
-			stack[stack_ptr--].num = stack[i].op.calc(a,b);
+			stack[i].op.calc(stack[stack_ptr+2].num.num, stack[stack_ptr+2].num.num, stack[stack_ptr+1].num.num, MPFR_RNDN);
+			stack_ptr++;
+			//mpfr_clear(a.num);
+			//mpfr_clear(b.num);
 		} else if (!stack[i].is_op)
 			stack[stack_ptr--] = stack[i];
 		else
 			return -1;
 
 	}
-	memcpy(ret, &stack[STACK_SIZE-1].num, sizeof(*ret));
+	*ret = stack[STACK_SIZE-1].num;
 	return 0;
 }
 int eval_prefix(union token *stack, int in_stack_ptr, struct number *ret)
@@ -95,9 +98,11 @@ int eval_prefix(union token *stack, int in_stack_ptr, struct number *ret)
 	int i, stack_ptr = STACK_SIZE - 1;
 	for (i = in_stack_ptr - 1; i >= 0; i--) {
 		if (stack[i].is_op && stack_ptr < STACK_SIZE - 2) {
-			struct number a = stack[++stack_ptr].num;
+/*			struct number a = stack[++stack_ptr].num;
 			struct number b = stack[++stack_ptr].num;
 			stack[stack_ptr--].num = stack[i].op.calc(a,b);
+			mpfr_clear(a.num);
+			mpfr_clear(b.num);*/
 		} else if (!stack[i].is_op)
 			stack[stack_ptr--] = stack[i];
 		else
@@ -117,20 +122,16 @@ int calculate(char *str, struct number *ret)
 
 int get_type(const char *str)
 {
-	char *c;
-	double num;
+	struct operator op;
 	if (*str == '(')
 		return LPARENS_TYPE;
 	if (*str == ')')
 		return RPARENS_TYPE;
-	num = strtod(str, &c);
-	if (c > str)
-		return NUM_TYPE;
-	return OP_TYPE;
+	if (get_op(str, &op) == 0)
+		return OP_TYPE;
+	return NUM_TYPE;
 }
 int get_num(const char *str, struct number *num)
 {
-	char *c;
-	num->num = strtod(str, &c);
-	return (c > str) - 1;
+	return mpfr_init_set_str(num->num, str, 10, MPFR_RNDN);
 }

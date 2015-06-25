@@ -1,5 +1,4 @@
-#include <math.h>
-
+#include <mpfr.h>
 #include "calculator.h"
 #include "operator.h"
 
@@ -12,65 +11,27 @@ int get_op(const char *str, struct operator *op)
 	switch (*str) {
 	case '+':
 		op->prec = 1;
-		op->calc = add;
+		op->calc = mpfr_add;
 		break;
 	case '-':
 		op->prec = 1;
-		op->calc = subtract;
+		op->calc = mpfr_sub;
 		break;
 	case '*':
 		op->prec = 2;
-		op->calc = multiply;
+		op->calc = mpfr_mul;
 		break;
 	case '/':
 		op->prec = 2;
-		op->calc = divide;
+		op->calc = mpfr_div;
 		break;
 	case '^':
 		op->assoc = RIGHT_ASSOC;
 		op->prec = 3;
-		op->calc = power;
+		op->calc = mpfr_pow;
 		break;
 	default:
 		return -1;
 	}
 	return 0;
 }
-
-struct number add(struct number a, struct number b)
-{
-	struct number ret;
-	ret.num = a.num + b.num;
-	return ret;
-}
-
-struct number subtract(struct number a, struct number b)
-{
-	struct number ret;
-	ret.num = b.num - a.num;
-	return ret;
-}
-
-struct number multiply(struct number a, struct number b)
-{
-	struct number ret;
-	ret.num = a.num * b.num;
-	return ret;
-}
-
-struct number divide(struct number a, struct number b)
-{
-	struct number ret;
-	ret.num = b.num / a.num;
-	return ret;
-}
-
-struct number power(struct number a, struct number b)
-{
-	struct number ret;
-	ret.num = pow(b.num, a.num);
-	return ret;
-}
-
-
-
